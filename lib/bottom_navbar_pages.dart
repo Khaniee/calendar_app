@@ -32,7 +32,20 @@ class _BottomNavBarPagesState extends State<BottomNavBarPages> {
         bucket: bucket,
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          showModalBottomSheet(
+              context: context,
+              builder: (BuildContext context) {
+                return SizedBox(
+                  height: 400,
+                  child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: const Text("close")),
+                );
+              });
+        },
         child: Icon(Icons.add),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
