@@ -3,45 +3,42 @@ import 'package:my_project/app_layout.dart';
 import 'package:my_project/utils/color.dart';
 import 'package:my_project/utils/fontsize.dart';
 import 'package:my_project/widgets/text.dart';
+import 'package:table_calendar/table_calendar.dart';
 
-class CalendarScreen extends StatelessWidget {
+class CalendarScreen extends StatefulWidget {
   const CalendarScreen({super.key});
 
   @override
+  State<CalendarScreen> createState() => _CalendarScreenState();
+}
+
+class _CalendarScreenState extends State<CalendarScreen> {
+  DateTime _selectedDay = DateTime.now();
+  DateTime _focusedDay = DateTime.now();
+
+  @override
   Widget build(BuildContext context) {
+    DateTime todayDate = DateTime.now();
+
     return AppLayout(
       title: "Calendar",
-      child: Container(
-        child: Column(
-          children: [
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 20),
-                      child: AppText(
-                        "Morning",
-                        fontSize: AppFontSize.extraLarge,
-                        isBold: true,
-                      ),
-                    ),
-                    TaskCard(),
-                    TaskCard(),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 20),
-                      child: AppText(
-                        "Evening",
-                        fontSize: AppFontSize.extraLarge,
-                        isBold: true,
-                      ),
-                    ),
-                    TodayEventCard(),
-                  ]),
-            )
-          ],
-        ),
+      child: TableCalendar(
+        calendarFormat: CalendarFormat.month,
+        firstDay: DateTime(todayDate.year - 10, todayDate.month, todayDate.day),
+        lastDay: DateTime(todayDate.year + 10, todayDate.month, todayDate.day),
+        focusedDay: todayDate,
+        selectedDayPredicate: (day) {
+          return isSameDay(_selectedDay, day);
+        },
+        onDaySelected: (selectedDay, focusedDay) {
+          setState(() {
+            _selectedDay = selectedDay;
+            _focusedDay = focusedDay; // update `_focusedDay` here as well
+          });
+        },
+        onPageChanged: (focusedDay) {
+          _focusedDay = focusedDay;
+        },
       ),
     );
   }
