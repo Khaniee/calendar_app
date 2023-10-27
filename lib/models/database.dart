@@ -1,3 +1,4 @@
+import 'package:my_project/models/event.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
@@ -33,16 +34,17 @@ class AppDatabase {
 
     // Create each table when creating database
 
-    // await db.execute("""CREATE TABLE $tableStores(
-    //   ${StoreFields.id} $idType,
-    //   ${StoreFields.nom} $textType,
-    //   ${StoreFields.contact} $textType,
-    //   ${StoreFields.horairesOuverture1} $textType,
-    //   ${StoreFields.horairesOuverture2} $textType,
-    //   ${StoreFields.longlat} $textType,
-    //   ${StoreFields.image} $blobType
-    // )
-    // """);
+    await db.execute("""
+      CREATE TABLE ${Event.tablename} (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            title TEXT,
+            date_debut TEXT,
+            date_fin TEXT,
+            type TEXT,
+            lieu TEXT,
+            choses_apporter TEXT
+          )
+    """);
   }
 
   Future close() async {
