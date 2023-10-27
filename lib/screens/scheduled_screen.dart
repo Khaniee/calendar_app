@@ -10,9 +10,7 @@ class ScheduledScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AppLayout(
-      title: "Settings",
-      textColor: AppColor.white,
-      appBarColor: AppColor.primary,
+      title: "Scheduled Events",
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         height: double.maxFinite,

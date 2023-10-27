@@ -22,23 +22,51 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
     return AppLayout(
       title: "Calendar",
-      child: TableCalendar(
-        calendarFormat: CalendarFormat.month,
-        firstDay: DateTime(todayDate.year - 10, todayDate.month, todayDate.day),
-        lastDay: DateTime(todayDate.year + 10, todayDate.month, todayDate.day),
-        focusedDay: todayDate,
-        selectedDayPredicate: (day) {
-          return isSameDay(_selectedDay, day);
-        },
-        onDaySelected: (selectedDay, focusedDay) {
-          setState(() {
-            _selectedDay = selectedDay;
-            _focusedDay = focusedDay; // update `_focusedDay` here as well
-          });
-        },
-        onPageChanged: (focusedDay) {
-          _focusedDay = focusedDay;
-        },
+      child: Column(
+        children: [
+          TableCalendar(
+            calendarFormat: CalendarFormat.month,
+            firstDay:
+                DateTime(todayDate.year - 10, todayDate.month, todayDate.day),
+            lastDay:
+                DateTime(todayDate.year + 10, todayDate.month, todayDate.day),
+            focusedDay: todayDate,
+            selectedDayPredicate: (day) {
+              return isSameDay(_selectedDay, day);
+            },
+            onDaySelected: (selectedDay, focusedDay) {
+              setState(() {
+                _selectedDay = selectedDay;
+                _focusedDay = focusedDay; // update `_focusedDay` here as well
+              });
+            },
+            onPageChanged: (focusedDay) {
+              _focusedDay = focusedDay;
+            },
+          ),
+          Container(
+            padding: const EdgeInsets.all(10),
+            child: Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+              ElevatedButton(
+                onPressed: () {},
+                child: Text("NEW EVENT"),
+              ),
+            ]),
+          ),
+          Expanded(
+            child: Container(
+              padding: const EdgeInsets.all(10),
+              child: ListView(
+                children: [
+                  TodayEventCard(),
+                  TodayEventCard(),
+                  TodayEventCard(),
+                  TodayEventCard(),
+                ],
+              ),
+            ),
+          )
+        ],
       ),
     );
   }
@@ -107,66 +135,6 @@ class TodayEventCard extends StatelessWidget {
               AppText(
                 "526 Nader Port",
               ),
-              Row(
-                children: [
-                  Icon(
-                    Icons.edit_note,
-                    color: AppColor.divider,
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  Icon(
-                    Icons.delete_sweep,
-                    color: AppColor.divider,
-                  ),
-                ],
-              )
-            ],
-          )
-        ],
-      ),
-    );
-  }
-}
-
-class TaskCard extends StatelessWidget {
-  const TaskCard({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.only(right: 10, bottom: 10),
-      margin: const EdgeInsets.symmetric(vertical: 10),
-      decoration: BoxDecoration(
-        boxShadow: const [
-          BoxShadow(
-              color: AppColor.divider, offset: Offset(0, 1), blurRadius: 1)
-        ],
-        color: AppColor.white,
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Checkbox(
-                value: false,
-                onChanged: (value) {},
-              ),
-              AppText(
-                "Task 2",
-                isBold: true,
-              ),
-              const Expanded(child: SizedBox()),
-              AppText("09:00"),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
               Row(
                 children: [
                   Icon(
