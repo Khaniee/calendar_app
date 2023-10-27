@@ -21,6 +21,8 @@ class _BottomNavBarPagesState extends State<BottomNavBarPages> {
   TextEditingController debutdateinput = TextEditingController();
   TextEditingController findateinput = TextEditingController();
 
+  final _eventFormKey = GlobalKey<FormState>();
+
   int currentTab = 1;
   final List<Widget> screens = [
     CalendarScreen(),
@@ -41,13 +43,6 @@ class _BottomNavBarPagesState extends State<BottomNavBarPages> {
 
   @override
   Widget build(BuildContext context) {
-    List<String> categories = [
-      "Fête",
-      "Anniversaire",
-      "Repas",
-      "Professionnel",
-      "Autre",
-    ];
     return Scaffold(
       body: PageStorage(
         child: currentScreen,
@@ -55,217 +50,7 @@ class _BottomNavBarPagesState extends State<BottomNavBarPages> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          if (currentScreen is TodayScreen) {
-            showForm(context, mounted, null);
-          } else {
-            showModalBottomSheet(
-                isScrollControlled: true,
-                backgroundColor: Colors.transparent,
-                context: context,
-                builder: (BuildContext context) {
-                  return FractionallySizedBox(
-                    heightFactor: 0.7,
-                    child: Container(
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(30),
-                          topRight: Radius.circular(30),
-                        ),
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          const Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 30),
-                            child: Text(
-                              "Ajouter évenement",
-                              style: TextStyle(
-                                color: AppColor.darkPrimary,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 30),
-                            child: TextFormField(
-                              decoration: const InputDecoration(
-                                labelText: 'Entrez le titre',
-                                border: OutlineInputBorder(),
-                              ),
-                              // The validator receives the text that the user has entered.
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please enter some text';
-                                }
-                                return null;
-                              },
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 30),
-                            child: TextField(
-                              controller: debutdateinput,
-                              readOnly: true,
-                              decoration: const InputDecoration(
-                                labelText: 'Entrez la date de début',
-                                border: OutlineInputBorder(),
-                              ),
-                              onTap: () async {
-                                DateTime? pickedDate = await showDatePicker(
-                                    context: context,
-                                    initialDate: DateTime.now(),
-                                    firstDate: DateTime(
-                                        2000), //DateTime.now() - not to allow to choose before today.
-                                    lastDate: DateTime(2101));
-
-                                if (pickedDate != null) {
-                                  print(
-                                      pickedDate); //pickedDate output format => 2021-03-10 00:00:00.000
-                                  String formattedDate =
-                                      DateFormat('yyyy-MM-dd')
-                                          .format(pickedDate);
-                                  print(
-                                      formattedDate); //formatted date output using intl package =>  2021-03-16
-                                  //you can implement different kind of Date Format here according to your requirement
-
-                                  setState(() {
-                                    debutdateinput.text =
-                                        formattedDate; //set output date to TextField value.
-                                  });
-                                } else {
-                                  print("Date is not selected");
-                                }
-                              },
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 30),
-                            child: TextField(
-                              controller: findateinput,
-                              readOnly: true,
-                              decoration: const InputDecoration(
-                                labelText: 'Entrez la date de fin',
-                                border: OutlineInputBorder(),
-                              ),
-                              onTap: () async {
-                                DateTime? pickedDate = await showDatePicker(
-                                    context: context,
-                                    initialDate: DateTime.now(),
-                                    firstDate: DateTime(
-                                        2000), //DateTime.now() - not to allow to choose before today.
-                                    lastDate: DateTime(2101));
-
-                                if (pickedDate != null) {
-                                  print(
-                                      pickedDate); //pickedDate output format => 2021-03-10 00:00:00.000
-                                  String formattedDate =
-                                      DateFormat('yyyy-MM-dd')
-                                          .format(pickedDate);
-                                  print(
-                                      formattedDate); //formatted date output using intl package =>  2021-03-16
-                                  //you can implement different kind of Date Format here according to your requirement
-
-                                  setState(() {
-                                    findateinput.text =
-                                        formattedDate; //set output date to TextField value.
-                                  });
-                                } else {
-                                  print("Date is not selected");
-                                }
-                              },
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 30),
-                            child: TextFormField(
-                              decoration: const InputDecoration(
-                                labelText: 'Entrez le lieu',
-                                border: OutlineInputBorder(),
-                              ),
-                              // The validator receives the text that the user has entered.
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please enter some text';
-                                }
-                                return null;
-                              },
-                            ),
-                          ),
-                          Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 30),
-                              child: InputDecorator(
-                                decoration: InputDecoration(
-                                    errorStyle: TextStyle(
-                                        color: Colors.redAccent,
-                                        fontSize: 16.0),
-                                    hintText: 'Entrez la catégorie',
-                                    border: OutlineInputBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(5.0))),
-                                isEmpty: currentSelectedValue == "",
-                                child: DropdownButtonHideUnderline(
-                                  child: DropdownButton<String>(
-                                    isDense: true,
-                                    onChanged: (newValue) {
-                                      print("change");
-                                      print(newValue);
-                                      setState(() {
-                                        currentSelectedValue = newValue!;
-                                      });
-                                      print(currentSelectedValue);
-                                    },
-                                    value: currentSelectedValue,
-                                    items: categories.map((String value) {
-                                      return DropdownMenuItem<String>(
-                                        value: value,
-                                        child: Text(value),
-                                      );
-                                    }).toList(),
-                                  ),
-                                ),
-                              )),
-                          Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 30),
-                            child: TextFormField(
-                              decoration: InputDecoration(
-                                labelText: 'Les choses à apporter?',
-                                border: OutlineInputBorder(),
-                              ),
-                              // The validator receives the text that the user has entered.
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please enter some text';
-                                }
-                                return null;
-                              },
-                            ),
-                          ),
-                          Center(
-                            child: ElevatedButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                child: const Text("Ajouter")),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                  // SizedBox(
-                  //   height: 400,
-                  //   child: ElevatedButton(
-                  //       onPressed: () {
-                  //         Navigator.pop(context);
-                  //       },
-                  //       child: const Text("close")),
-                  // );
-                });
-          }
+          showAddEventBottomSheet(context);
         },
         child: Icon(Icons.add),
         backgroundColor: AppColor.primary,
@@ -392,90 +177,223 @@ class _BottomNavBarPagesState extends State<BottomNavBarPages> {
     );
   }
 
-  TimeOfDay selectedTime = TimeOfDay.now();
-
-  Future<void> _selectTime(BuildContext context) async {
-    TimeOfDay? _selectedTime = await showTimePicker(
-      initialTime: TimeOfDay.now(),
+  Future<dynamic> showAddEventBottomSheet(BuildContext context) {
+    List<String> categories = [
+      "Fête",
+      "Anniversaire",
+      "Repas",
+      "Professionnel",
+      "Autre",
+    ];
+    return showModalBottomSheet(
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
       context: context,
-    );
-
-    setState(() {
-      selectedTime = _selectedTime!;
-    });
-  }
-
-  void showForm(context, mounted, int? id) async {
-    if (id != null) {
-// id == null -> pour insertion
-// id != null -> pour modification
-      // final existingJournal =
-      //     _journals.firstWhere((element) => element['id'] == id);
-      // _titleController.text = existingJournal['title'];
-      // _descriptionController.text = existingJournal['description'];
-    }
-    showModalBottomSheet(
-        context: context,
-        elevation: 5,
-        isScrollControlled: true,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-        ),
-        builder: (_) => Container(
-              padding: EdgeInsets.only(
-                top: 15,
-                left: 15,
-                right: 15,
-                bottom: MediaQuery.of(context).viewInsets.bottom + 120,
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  TextField(
-                    controller: _titleController,
-                    decoration: const InputDecoration(hintText: 'Titre'),
+      builder: (BuildContext context) {
+        return Form(
+          key: _eventFormKey,
+          child: StatefulBuilder(
+            builder: (BuildContext context,
+                StateSetter setState /*You can rename this!*/) {
+              return FractionallySizedBox(
+                heightFactor: 0.7,
+                child: Container(
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(30),
+                      topRight: Radius.circular(30),
+                    ),
                   ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  TextField(
-                    controller: _descriptionController,
-                    decoration: const InputDecoration(hintText: 'Description'),
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  Row(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      AppText("Start Time : "),
-                      ElevatedButton(
-                        onPressed: () => _selectTime(context),
-                        child: AppText(selectedTime.toString()),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 30),
+                        child: Text(
+                          "Ajouter évenement",
+                          style: TextStyle(
+                            color: AppColor.darkPrimary,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 30),
+                        child: TextFormField(
+                          decoration: const InputDecoration(
+                            labelText: 'Entrez le titre',
+                            border: OutlineInputBorder(),
+                          ),
+                          // The validator receives the text that the user has entered.
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter some text';
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 30),
+                        child: TextFormField(
+                          controller: debutdateinput,
+                          readOnly: true,
+                          decoration: const InputDecoration(
+                            labelText: 'Entrez la date de début',
+                            border: OutlineInputBorder(),
+                          ),
+                          onTap: () async {
+                            DateTime? pickedDate = await showDatePicker(
+                                context: context,
+                                initialDate: DateTime.now(),
+                                firstDate: DateTime(
+                                    2000), //DateTime.now() - not to allow to choose before today.
+                                lastDate: DateTime(2101));
+
+                            if (pickedDate != null) {
+                              print(
+                                  pickedDate); //pickedDate output format => 2021-03-10 00:00:00.000
+                              String formattedDate =
+                                  DateFormat('yyyy-MM-dd').format(pickedDate);
+                              print(
+                                  formattedDate); //formatted date output using intl package =>  2021-03-16
+                              //you can implement different kind of Date Format here according to your requirement
+
+                              setState(() {
+                                debutdateinput.text =
+                                    formattedDate; //set output date to TextField value.
+                              });
+                            } else {
+                              print("Date is not selected");
+                            }
+                          },
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 30),
+                        child: TextFormField(
+                          controller: findateinput,
+                          readOnly: true,
+                          decoration: const InputDecoration(
+                            labelText: 'Entrez la date de fin',
+                            border: OutlineInputBorder(),
+                          ),
+                          onTap: () async {
+                            DateTime? pickedDate = await showDatePicker(
+                                context: context,
+                                initialDate: DateTime.now(),
+                                firstDate: DateTime(
+                                    2000), //DateTime.now() - not to allow to choose before today.
+                                lastDate: DateTime(2101));
+
+                            if (pickedDate != null) {
+                              print(
+                                  pickedDate); //pickedDate output format => 2021-03-10 00:00:00.000
+                              String formattedDate =
+                                  DateFormat('yyyy-MM-dd').format(pickedDate);
+                              print(
+                                  formattedDate); //formatted date output using intl package =>  2021-03-16
+                              //you can implement different kind of Date Format here according to your requirement
+
+                              setState(() {
+                                findateinput.text =
+                                    formattedDate; //set output date to TextField value.
+                              });
+                            } else {
+                              print("Date is not selected");
+                            }
+                          },
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 30),
+                        child: TextFormField(
+                          decoration: const InputDecoration(
+                            labelText: 'Entrez le lieu',
+                            border: OutlineInputBorder(),
+                          ),
+                          // The validator receives the text that the user has entered.
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter some text';
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                      Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 30),
+                          child: InputDecorator(
+                            decoration: InputDecoration(
+                                errorStyle: TextStyle(
+                                    color: Colors.redAccent, fontSize: 16.0),
+                                hintText: 'Entrez la catégorie',
+                                border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(5.0))),
+                            isEmpty: currentSelectedValue == "",
+                            child: DropdownButtonHideUnderline(
+                              child: DropdownButton<String>(
+                                isDense: true,
+                                onChanged: (newValue) {
+                                  print("change");
+                                  print(newValue);
+                                  setState(() {
+                                    currentSelectedValue = newValue!;
+                                  });
+                                  print(currentSelectedValue);
+                                },
+                                value: currentSelectedValue,
+                                items: categories.map((String value) {
+                                  return DropdownMenuItem<String>(
+                                    value: value,
+                                    child: Text(value),
+                                  );
+                                }).toList(),
+                              ),
+                            ),
+                          )),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 30),
+                        child: TextFormField(
+                          decoration: InputDecoration(
+                            labelText: 'Les choses à apporter?',
+                            border: OutlineInputBorder(),
+                          ),
+                          // The validator receives the text that the user has entered.
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter some text';
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                      Center(
+                        child: ElevatedButton(
+                            onPressed: () {
+                              if (_eventFormKey.currentState!.validate()) {
+                                _eventFormKey.currentState!.reset();
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content: Text('Processing Data')),
+                                );
+                              }
+                            },
+                            child: const Text("Ajouter")),
                       ),
                     ],
                   ),
-                  ElevatedButton(
-                    onPressed: () async {
-// sauvegarde
-                      if (id == null) {
-                        // await _addItem();
-                      }
-                      if (id != null) {
-                        // await _updateItem(id);
-                      }
-                      _titleController.text = '';
-                      _descriptionController.text = '';
-                      if (!mounted) return;
-                      Navigator.of(context).pop();
-                    },
-                    child: Text(id == null ? 'Créer' : 'Modifier'),
-                  )
-                ],
-              ),
-            ));
+                ),
+              );
+            },
+          ),
+        );
+      },
+    );
   }
-
-  final TextEditingController _titleController = TextEditingController();
-  final TextEditingController _descriptionController = TextEditingController();
 }

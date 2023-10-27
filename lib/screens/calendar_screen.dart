@@ -47,9 +47,10 @@ class _CalendarScreenState extends State<CalendarScreen> {
           Container(
             padding: const EdgeInsets.all(10),
             child: Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-              ElevatedButton(
+              ElevatedButton.icon(
+                icon: Icon(Icons.add_box),
                 onPressed: () {},
-                child: Text("NEW EVENT"),
+                label: Text("Ajouter Evenement"),
               ),
             ]),
           ),
