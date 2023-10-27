@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:my_project/app_layout.dart';
+import 'package:my_project/event.dart';
 import 'package:my_project/utils/color.dart';
 import 'package:my_project/utils/fontsize.dart';
 import 'package:my_project/widgets/text.dart';
@@ -15,6 +16,24 @@ class CalendarScreen extends StatefulWidget {
 class _CalendarScreenState extends State<CalendarScreen> {
   DateTime _selectedDay = DateTime.now();
   DateTime _focusedDay = DateTime.now();
+  CalendarFormat _calendarFormat = CalendarFormat.month;
+
+  // store the events
+  Map<DateTime, List<Event>> events = {};
+
+  late final ValueNotifier<List<Event>> _selectedEvents;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedDay = _focusedDay;
+    _selectedEvents = ValueNotifier(_getEventsForDay(_selectedDay));
+  }
+
+  List<Event> _getEventsForDay(DateTime day) {
+    // show event in a day
+    return events[day] ?? [];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,48 +44,66 @@ class _CalendarScreenState extends State<CalendarScreen> {
       child: Column(
         children: [
           TableCalendar(
-            calendarFormat: CalendarFormat.month,
+            calendarFormat: _calendarFormat,
             firstDay:
                 DateTime(todayDate.year - 10, todayDate.month, todayDate.day),
             lastDay:
                 DateTime(todayDate.year + 10, todayDate.month, todayDate.day),
-            focusedDay: todayDate,
+            focusedDay: _focusedDay,
             selectedDayPredicate: (day) {
               return isSameDay(_selectedDay, day);
             },
             onDaySelected: (selectedDay, focusedDay) {
               setState(() {
-                _selectedDay = selectedDay;
                 _focusedDay = focusedDay; // update `_focusedDay` here as well
+                _selectedDay = selectedDay;
+                _selectedEvents.value = _getEventsForDay(_selectedDay);
               });
+            },
+            onFormatChanged: (format) {
+              if (_calendarFormat != format) {
+                setState(() {
+                  _calendarFormat = format;
+                });
+              }
             },
             onPageChanged: (focusedDay) {
               _focusedDay = focusedDay;
             },
+            eventLoader: _getEventsForDay,
           ),
           Container(
             padding: const EdgeInsets.all(10),
-            child: Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-              ElevatedButton.icon(
-                icon: Icon(Icons.add_box),
-                onPressed: () {},
-                label: Text("Ajouter Evenement"),
-              ),
-            ]),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                ElevatedButton.icon(
+                  icon: Icon(Icons.add_box),
+                  onPressed: () {
+                    events.addAll({
+                      _selectedDay: [Event("titre event", "lieu event")]
+                    });
+                    _selectedEvents.value = _getEventsForDay(_selectedDay);
+                  },
+                  label: Text("Ajouter Evenement"),
+                ),
+              ],
+            ),
           ),
           Expanded(
             child: Container(
               padding: const EdgeInsets.all(10),
-              child: ListView(
-                children: [
-                  TodayEventCard(),
-                  TodayEventCard(),
-                  TodayEventCard(),
-                  TodayEventCard(),
-                ],
-              ),
+              child: ValueListenableBuilder<List<Event>>(
+                  valueListenable: _selectedEvents,
+                  builder: (context, value, _) {
+                    return ListView.builder(
+                        itemCount: value.length,
+                        itemBuilder: (context, index) {
+                          return TodayEventCard(event: value[index]);
+                        });
+                  }),
             ),
-          )
+          ),
         ],
       ),
     );
@@ -76,8 +113,9 @@ class _CalendarScreenState extends State<CalendarScreen> {
 class TodayEventCard extends StatelessWidget {
   const TodayEventCard({
     super.key,
+    required this.event,
   });
-
+  final Event event;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -96,7 +134,7 @@ class TodayEventCard extends StatelessWidget {
           Row(
             children: [
               AppText(
-                "Event for today",
+                event.title,
                 isBold: true,
               ),
               const Expanded(child: SizedBox()),
