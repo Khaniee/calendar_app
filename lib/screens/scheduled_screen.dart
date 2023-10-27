@@ -10,38 +10,74 @@ class ScheduledScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AppLayout(
-      title: "",
-      appBarColor: AppColor.primary,
+      title: "Scheduled Events",
       child: Container(
-        child: Column(
-          children: [
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 20),
-                      child: AppText(
-                        "Morning",
-                        fontSize: AppFontSize.extraLarge,
-                        isBold: true,
-                      ),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        height: double.maxFinite,
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  AppText("28 Jan"),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  Expanded(
+                    child: Column(
+                      children: [
+                        TodayEventCard(),
+                        TodayEventCard(),
+                      ],
                     ),
-                    TaskCard(),
-                    TaskCard(),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 20),
-                      child: AppText(
-                        "Evening",
-                        fontSize: AppFontSize.extraLarge,
-                        isBold: true,
-                      ),
+                  ),
+                ],
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  AppText("14 Fev"),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  Expanded(
+                    child: Column(
+                      children: [
+                        TodayEventCard(),
+                      ],
                     ),
-                    TodayEventCard(),
-                  ]),
-            )
-          ],
+                  ),
+                ],
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  AppText("26 Fev"),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  Expanded(
+                      child: Column(
+                    children: [
+                      TodayEventCard(),
+                      TodayEventCard(),
+                      TodayEventCard(),
+                    ],
+                  )),
+                ],
+              ),
+              const SizedBox(
+                height: 20,
+              )
+            ],
+          ),
         ),
       ),
     );

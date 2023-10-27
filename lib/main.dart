@@ -13,7 +13,7 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'Calendar App',
         theme: ThemeData(
-          primarySwatch: Colors.purple,
+          primarySwatch: Colors.deepPurple,
         ),
         home: const BottomNavBarPages());
   }

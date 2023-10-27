@@ -10,8 +10,7 @@ class SettingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AppLayout(
-      title: "",
-      appBarColor: AppColor.primary,
+      showAppBar: false,
       child: Container(
         child: Column(
           children: [

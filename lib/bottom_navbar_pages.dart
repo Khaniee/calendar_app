@@ -47,6 +47,7 @@ class _BottomNavBarPagesState extends State<BottomNavBarPages> {
               });
         },
         child: Icon(Icons.add),
+        backgroundColor: AppColor.primary,
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: BottomAppBar(
