@@ -2,12 +2,13 @@ import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:my_project/models/event.dart';
 import 'package:my_project/screens/calendar_screen.dart';
 import 'package:my_project/screens/scheduled_screen.dart';
 import 'package:my_project/screens/setting_screen.dart';
 import 'package:my_project/screens/today_screen.dart';
+import 'package:my_project/services/event_service.dart';
 import 'package:my_project/utils/color.dart';
-import 'package:my_project/utils/fontsize.dart';
 import 'package:my_project/widgets/text.dart';
 
 class BottomNavBarPages extends StatefulWidget {
@@ -18,8 +19,13 @@ class BottomNavBarPages extends StatefulWidget {
 }
 
 class _BottomNavBarPagesState extends State<BottomNavBarPages> {
+  TextEditingController titleInput = TextEditingController();
+  DateTime debutDate = DateTime.now();
+  DateTime finDate = DateTime.now();
   TextEditingController debutdateinput = TextEditingController();
   TextEditingController findateinput = TextEditingController();
+  TextEditingController lieuInput = TextEditingController();
+  TextEditingController chosesAEmporterInput = TextEditingController();
 
   final _eventFormKey = GlobalKey<FormState>();
 
@@ -32,10 +38,10 @@ class _BottomNavBarPagesState extends State<BottomNavBarPages> {
   ];
   final PageStorageBucket bucket = PageStorageBucket();
   Widget currentScreen = TodayScreen();
-  String currentSelectedValue = "";
+  String typeInput = "";
   @override
   void initState() {
-    currentSelectedValue = "Fête";
+    typeInput = "Fête";
     debutdateinput.text = ""; //set the initial value of text field
     findateinput.text = ""; //set the initial value of text field
     super.initState();
@@ -225,9 +231,9 @@ class _BottomNavBarPagesState extends State<BottomNavBarPages> {
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: 30),
                         child: TextFormField(
+                          controller: titleInput,
                           decoration: const InputDecoration(
                             labelText: 'Entrez le titre',
-                            border: OutlineInputBorder(),
                           ),
                           // The validator receives the text that the user has entered.
                           validator: (value) {
@@ -240,38 +246,78 @@ class _BottomNavBarPagesState extends State<BottomNavBarPages> {
                       ),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 30),
-                        child: TextFormField(
-                          controller: debutdateinput,
-                          readOnly: true,
-                          decoration: const InputDecoration(
-                            labelText: 'Entrez la date de début',
-                            border: OutlineInputBorder(),
-                          ),
-                          onTap: () async {
-                            DateTime? pickedDate = await showDatePicker(
-                                context: context,
-                                initialDate: DateTime.now(),
-                                firstDate: DateTime(
-                                    2000), //DateTime.now() - not to allow to choose before today.
-                                lastDate: DateTime(2101));
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: TextFormField(
+                                controller: debutdateinput,
+                                readOnly: true,
+                                decoration: const InputDecoration(
+                                  labelText: 'date de début',
+                                ),
+                                onTap: () async {
+                                  DateTime? pickedDate = await showDatePicker(
+                                      context: context,
+                                      initialDate: DateTime.now(),
+                                      firstDate: DateTime(
+                                          2000), //DateTime.now() - not to allow to choose before today.
+                                      lastDate: DateTime(2101));
 
-                            if (pickedDate != null) {
-                              print(
-                                  pickedDate); //pickedDate output format => 2021-03-10 00:00:00.000
-                              String formattedDate =
-                                  DateFormat('yyyy-MM-dd').format(pickedDate);
-                              print(
-                                  formattedDate); //formatted date output using intl package =>  2021-03-16
-                              //you can implement different kind of Date Format here according to your requirement
+                                  if (pickedDate != null) {
+                                    print(
+                                        pickedDate); //pickedDate output format => 2021-03-10 00:00:00.000
+                                    String formattedDate =
+                                        DateFormat('yyyy-MM-dd')
+                                            .format(pickedDate);
+                                    print(
+                                        formattedDate); //formatted date output using intl package =>  2021-03-16
+                                    //you can implement different kind of Date Format here according to your requirement
 
-                              setState(() {
-                                debutdateinput.text =
-                                    formattedDate; //set output date to TextField value.
-                              });
-                            } else {
-                              print("Date is not selected");
-                            }
-                          },
+                                    setState(() {
+                                      debutDate = pickedDate;
+                                      debutdateinput.text =
+                                          formattedDate; //set output date to TextField value.
+                                    });
+                                  } else {
+                                    print("Date is not selected");
+                                  }
+                                },
+                              ),
+                            ),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Expanded(
+                              child: TextFormField(
+                                // controller: debutdateinput,
+                                readOnly: true,
+                                decoration: const InputDecoration(
+                                  labelText: 'heure de début',
+                                  //
+                                ),
+                                onTap: () async {
+                                  TimeOfDay? pickedDate = await showTimePicker(
+                                    context: context,
+                                    initialTime: TimeOfDay.now(),
+                                  );
+                                  if (pickedDate != null) {
+                                    print(
+                                        pickedDate); //pickedDate output format => 2021-03-10 00:00:00.000
+                                    String formattedDate =
+                                        pickedDate.format(context);
+
+                                    // setState(() {
+                                    //   debutDate = pickedDate;
+                                    //   debutdateinput.text =
+                                    //       formattedDate; //set output date to TextField value.
+                                    // });
+                                  } else {
+                                    print("Date is not selected");
+                                  }
+                                },
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                       Padding(
@@ -281,7 +327,6 @@ class _BottomNavBarPagesState extends State<BottomNavBarPages> {
                           readOnly: true,
                           decoration: const InputDecoration(
                             labelText: 'Entrez la date de fin',
-                            border: OutlineInputBorder(),
                           ),
                           onTap: () async {
                             DateTime? pickedDate = await showDatePicker(
@@ -313,9 +358,9 @@ class _BottomNavBarPagesState extends State<BottomNavBarPages> {
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: 30),
                         child: TextFormField(
+                          controller: lieuInput,
                           decoration: const InputDecoration(
                             labelText: 'Entrez le lieu',
-                            border: OutlineInputBorder(),
                           ),
                           // The validator receives the text that the user has entered.
                           validator: (value) {
@@ -335,7 +380,7 @@ class _BottomNavBarPagesState extends State<BottomNavBarPages> {
                                 hintText: 'Entrez la catégorie',
                                 border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(5.0))),
-                            isEmpty: currentSelectedValue == "",
+                            isEmpty: typeInput == "",
                             child: DropdownButtonHideUnderline(
                               child: DropdownButton<String>(
                                 isDense: true,
@@ -343,11 +388,11 @@ class _BottomNavBarPagesState extends State<BottomNavBarPages> {
                                   print("change");
                                   print(newValue);
                                   setState(() {
-                                    currentSelectedValue = newValue!;
+                                    typeInput = newValue!;
                                   });
-                                  print(currentSelectedValue);
+                                  print(typeInput);
                                 },
-                                value: currentSelectedValue,
+                                value: typeInput,
                                 items: categories.map((String value) {
                                   return DropdownMenuItem<String>(
                                     value: value,
@@ -360,9 +405,9 @@ class _BottomNavBarPagesState extends State<BottomNavBarPages> {
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: 30),
                         child: TextFormField(
+                          controller: chosesAEmporterInput,
                           decoration: InputDecoration(
                             labelText: 'Les choses à apporter?',
-                            border: OutlineInputBorder(),
                           ),
                           // The validator receives the text that the user has entered.
                           validator: (value) {
@@ -377,11 +422,17 @@ class _BottomNavBarPagesState extends State<BottomNavBarPages> {
                         child: ElevatedButton(
                             onPressed: () {
                               if (_eventFormKey.currentState!.validate()) {
-                                _eventFormKey.currentState!.reset();
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                      content: Text('Processing Data')),
+                                EventService.create(
+                                  Event(
+                                      null,
+                                      titleInput.value.text,
+                                      debutDate,
+                                      finDate,
+                                      typeInput,
+                                      lieuInput.value.text,
+                                      chosesAEmporterInput.value.text),
                                 );
+                                Navigator.pop(context);
                               }
                             },
                             child: const Text("Ajouter")),
