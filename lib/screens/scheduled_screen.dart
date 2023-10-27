@@ -1,11 +1,38 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:my_project/app_layout.dart';
+import 'package:my_project/models/event.dart';
+import 'package:my_project/services/event_service.dart';
 import 'package:my_project/utils/color.dart';
 import 'package:my_project/utils/fontsize.dart';
+import 'package:my_project/widgets/event_card.dart';
 import 'package:my_project/widgets/text.dart';
 
-class ScheduledScreen extends StatelessWidget {
+class ScheduledScreen extends StatefulWidget {
   const ScheduledScreen({super.key});
+
+  @override
+  State<ScheduledScreen> createState() => _ScheduledScreenState();
+}
+
+class _ScheduledScreenState extends State<ScheduledScreen> {
+  Map<DateTime, List<Event>> events = {};
+
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+
+    EventService.getEventsByDay().then(
+      (value) => setState(
+        () {
+          events = value;
+          isLoading = false;
+        },
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -16,68 +43,26 @@ class ScheduledScreen extends StatelessWidget {
         height: double.maxFinite,
         child: SingleChildScrollView(
           child: Column(
-            children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  AppText("28 Jan"),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  Expanded(
-                    child: Column(
+              children: events.entries
+                  .map(
+                    (entry) => Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        TodayEventCard(),
-                        TodayEventCard(),
+                        AppText(DateFormat('dd MMM').format(entry.key)),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Expanded(
+                          child: Column(
+                            children: entry.value
+                                .map((e) => EventCard(event: e))
+                                .toList(),
+                          ),
+                        ),
                       ],
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  AppText("14 Fev"),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  Expanded(
-                    child: Column(
-                      children: [
-                        TodayEventCard(),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  AppText("26 Fev"),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  Expanded(
-                      child: Column(
-                    children: [
-                      TodayEventCard(),
-                      TodayEventCard(),
-                      TodayEventCard(),
-                    ],
-                  )),
-                ],
-              ),
-              const SizedBox(
-                height: 20,
-              )
-            ],
-          ),
+                  )
+                  .toList()),
         ),
       ),
     );
