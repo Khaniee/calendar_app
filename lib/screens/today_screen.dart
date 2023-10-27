@@ -4,8 +4,28 @@ import 'package:my_project/utils/color.dart';
 import 'package:my_project/utils/fontsize.dart';
 import 'package:my_project/widgets/text.dart';
 
-class TodayScreen extends StatelessWidget {
+class TodayScreen extends StatefulWidget {
   const TodayScreen({super.key});
+
+  @override
+  State<TodayScreen> createState() => _TodayScreenState();
+}
+
+class _TodayScreenState extends State<TodayScreen> {
+  int currentBody = 0;
+
+  List listBody = [
+    {
+      "label": "My Task & Events",
+      "icons": Icons.calendar_today,
+      "body": TodayTaskAndEvent(),
+    },
+    {
+      "label": "Done",
+      "icons": Icons.done,
+      "body": DoneTask(),
+    },
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -59,35 +79,95 @@ class TodayScreen extends StatelessWidget {
                 ],
               ),
             ),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 20),
-                      child: AppText(
-                        "Morning",
-                        fontSize: AppFontSize.extraLarge,
-                        isBold: true,
-                      ),
+            Row(
+              children: List.generate(
+                listBody.length,
+                (index) => Container(
+                  padding: const EdgeInsets.only(left: 20),
+                  child: ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: currentBody == index
+                          ? AppColor.darkPrimary
+                          : AppColor.lightPrimary,
+                      foregroundColor: currentBody == index
+                          ? AppColor.white
+                          : AppColor.darkPrimary,
                     ),
-                    TaskCard(),
-                    TaskCard(),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 20),
-                      child: AppText(
-                        "Evening",
-                        fontSize: AppFontSize.extraLarge,
-                        isBold: true,
-                      ),
+                    icon: Icon(listBody[index]["icons"]),
+                    onPressed: () {
+                      setState(() {
+                        currentBody = index;
+                      });
+                    },
+                    label: AppText(
+                      listBody[index]["label"],
+                      color: currentBody == index
+                          ? AppColor.white
+                          : AppColor.darkPrimary,
                     ),
-                    TodayEventCard(),
-                  ]),
+                  ),
+                ),
+              ),
+            ),
+            Expanded(
+              child:
+                  SingleChildScrollView(child: listBody[currentBody]["body"]),
             )
           ],
         ),
       ),
+    );
+  }
+}
+
+class DoneTask extends StatelessWidget {
+  const DoneTask({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        TaskCard(),
+        TaskCard(),
+      ]),
+    );
+  }
+}
+
+class TodayTaskAndEvent extends StatelessWidget {
+  const TodayTaskAndEvent({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 20),
+          child: AppText(
+            "Morning",
+            fontSize: AppFontSize.extraLarge,
+            isBold: true,
+          ),
+        ),
+        TaskCard(),
+        TaskCard(),
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 20),
+          child: AppText(
+            "Evening",
+            fontSize: AppFontSize.extraLarge,
+            isBold: true,
+          ),
+        ),
+        TodayEventCard(),
+        TodayEventCard(),
+      ]),
     );
   }
 }
