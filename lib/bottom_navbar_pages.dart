@@ -34,6 +34,7 @@ class _BottomNavBarPagesState extends State<BottomNavBarPages> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {},
         child: Icon(Icons.add),
+        backgroundColor: AppColor.primary,
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: BottomAppBar(
