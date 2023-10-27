@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:my_project/models/database.dart';
 import 'package:my_project/models/event.dart';
@@ -15,7 +16,7 @@ class EventService {
     );
   }
 
-  Future<int> updateEvent(Event event) async {
+  static Future<int> updateEvent(Event event) async {
     final db = await AppDatabase.instance.database;
     return await db.update(
       Event.tablename,
@@ -27,14 +28,15 @@ class EventService {
 
   static Future<Map<DateTime, List<Event>>> getEventsByDay() async {
     Map<DateTime, List<Event>> eventsByDay = {};
-
     var events = await EventService.getAll();
     for (Event event in events) {
-      DateTime key = event.date_debut;
+      DateTime key = DateTime(
+          event.date_debut.year, event.date_debut.month, event.date_debut.day);
       if (eventsByDay[key] != null) {
         eventsByDay[key]!.add(event);
+      } else {
+        eventsByDay[key] = [event];
       }
-      eventsByDay[key] = [event];
     }
 
     return eventsByDay;

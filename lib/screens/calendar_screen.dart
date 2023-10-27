@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:my_project/app_layout.dart';
 import 'package:my_project/models/event.dart';
 import 'package:my_project/services/event_service.dart';
 import 'package:my_project/utils/color.dart';
 import 'package:my_project/utils/fontsize.dart';
+import 'package:my_project/widgets/event_form.dart';
 import 'package:my_project/widgets/text.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -44,6 +46,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
     print(events);
     // show event in a day
     DateTime formatedDay = DateTime(day.year, day.month, day.day);
+    print(formatedDay);
     return events[formatedDay] ?? [];
   }
 
@@ -135,7 +138,8 @@ class TodayEventCard extends StatelessWidget {
                 isBold: true,
               ),
               const Expanded(child: SizedBox()),
-              AppText("22:00 - 21:30"),
+              AppText(
+                  "${DateFormat('HH:mm').format(event.date_debut)} - ${DateFormat('HH:mm').format(event.date_fin)}"),
             ],
           ),
           const SizedBox(
@@ -154,12 +158,29 @@ class TodayEventCard extends StatelessWidget {
                 ),
                 child: Center(
                     child: AppText(
-                  "Party",
+                  event.type,
                   color: AppColor.primary,
                   fontSize: AppFontSize.small,
                   isBold: true,
                 )),
               ),
+              const SizedBox(
+                width: 10,
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  AppText(
+                    "N'oubliez pas",
+                    fontSize: AppFontSize.small,
+                    isBold: true,
+                  ),
+                  AppText(
+                    event.choses_apporter,
+                    fontSize: AppFontSize.small,
+                  ),
+                ],
+              )
             ],
           ),
           const SizedBox(
@@ -168,22 +189,93 @@ class TodayEventCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              AppText(
-                "526 Nader Port",
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Icon(
+                    Icons.location_on_sharp,
+                    color: AppColor.textColor,
+                    size: 16,
+                  ),
+                  AppText(
+                    event.lieu,
+                  ),
+                ],
               ),
               Row(
                 children: [
-                  Icon(
-                    Icons.edit_note,
-                    color: AppColor.divider,
+                  IconButton(
+                    onPressed: () {
+                      showModalBottomSheet(
+                        isScrollControlled: true,
+                        backgroundColor: Colors.transparent,
+                        context: context,
+                        builder: (BuildContext context) {
+                          return EventForm(
+                            event: event,
+                          );
+                        },
+                      );
+                    },
+                    icon: const Icon(
+                      Icons.edit_note,
+                      color: AppColor.divider,
+                    ),
                   ),
                   const SizedBox(
                     width: 10,
                   ),
-                  Icon(
-                    Icons.delete_sweep,
-                    color: AppColor.divider,
-                  ),
+                  IconButton(
+                    onPressed: () {
+                      showDialog(
+                          context: context,
+                          builder: (BuildContext context) => AlertDialog(
+                                title: const Text("Avertissement"),
+                                content: const AppText(
+                                    "Vous êtes sur de supprimer cet évènement?"),
+                                actions: [
+                                  TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: Text("Annuler")),
+                                  TextButton(
+                                      onPressed: () {
+                                        if (event.id != null) {
+                                          EventService.deleteEvent(event.id!);
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(
+                                            const SnackBar(
+                                              elevation: 0,
+                                              backgroundColor: Colors.green,
+                                              content: AppText(
+                                                "Evenement supprimé !",
+                                                color: AppColor.white,
+                                              ),
+                                            ),
+                                          );
+                                        } else {
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(
+                                            const SnackBar(
+                                              content: AppText(
+                                                "Erreur lors du supression!",
+                                                color: AppColor.white,
+                                              ),
+                                            ),
+                                          );
+                                        }
+                                        Navigator.pop(context);
+                                      },
+                                      child: Text("Supprimer")),
+                                ],
+                              ));
+                    },
+                    icon: const Icon(
+                      Icons.delete_sweep,
+                      color: AppColor.divider,
+                    ),
+                  )
                 ],
               )
             ],
