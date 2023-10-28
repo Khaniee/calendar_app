@@ -55,7 +55,10 @@ class _ScheduledScreenState extends State<ScheduledScreen> {
                         Expanded(
                           child: Column(
                             children: entry.value
-                                .map((e) => EventCard(event: e))
+                                .map((e) => EventCard(
+                                      event: e,
+                                      onEventModify: () {},
+                                    ))
                                 .toList(),
                           ),
                         ),

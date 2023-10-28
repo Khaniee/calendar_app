@@ -1,13 +1,10 @@
 import 'dart:ffi';
 
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:my_project/models/event.dart';
 import 'package:my_project/screens/calendar_screen.dart';
 import 'package:my_project/screens/scheduled_screen.dart';
 import 'package:my_project/screens/setting_screen.dart';
 import 'package:my_project/screens/today_screen.dart';
-import 'package:my_project/services/event_service.dart';
 import 'package:my_project/utils/color.dart';
 import 'package:my_project/widgets/text.dart';
 

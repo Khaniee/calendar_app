@@ -24,9 +24,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
   late final ValueNotifier<List<Event>> _selectedEvents;
 
-  @override
-  void initState() {
-    super.initState();
+  void initData() {
     EventService.getEventsByDay().then((value) {
       setState(() {
         events = value;
@@ -34,6 +32,12 @@ class _CalendarScreenState extends State<CalendarScreen> {
         _selectedEvents.value = _getEventsForDay(_selectedDay);
       });
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    initData();
     _selectedDay = _focusedDay;
     _selectedEvents = ValueNotifier(_getEventsForDay(_selectedDay));
   }
@@ -95,7 +99,10 @@ class _CalendarScreenState extends State<CalendarScreen> {
                           return ListView.builder(
                               itemCount: value.length,
                               itemBuilder: (context, index) {
-                                return EventCard(event: value[index]);
+                                return EventCard(
+                                  event: value[index],
+                                  onEventModify: initData,
+                                );
                               });
                         }),
                   ),

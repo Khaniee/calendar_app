@@ -11,8 +11,11 @@ class EventCard extends StatelessWidget {
   const EventCard({
     super.key,
     required this.event,
+    required this.onEventModify,
   });
   final Event event;
+  final Function onEventModify;
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -110,6 +113,7 @@ class EventCard extends StatelessWidget {
                         builder: (BuildContext context) {
                           return EventForm(
                             event: event,
+                            callback: onEventModify,
                           );
                         },
                       );

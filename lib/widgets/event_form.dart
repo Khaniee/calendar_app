@@ -7,8 +7,10 @@ import 'package:my_project/utils/color.dart';
 import 'package:my_project/widgets/text.dart';
 
 class EventForm extends StatefulWidget {
-  const EventForm({super.key, this.event});
+  const EventForm({super.key, this.event, this.callback});
+
   final Event? event;
+  final Function? callback;
 
   @override
   State<EventForm> createState() => _EventFormState();
@@ -362,6 +364,7 @@ class _EventFormState extends State<EventForm> {
                                         color: AppColor.white,
                                       )));
                             }
+                            widget.callback!();
                             Navigator.pop(context);
                           }
                         },
