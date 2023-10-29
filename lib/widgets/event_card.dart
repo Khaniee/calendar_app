@@ -39,7 +39,7 @@ class EventCard extends StatelessWidget {
               ),
               const Expanded(child: SizedBox()),
               AppText(
-                  "${DateFormat('HH:mm').format(event.date_debut)} - ${DateFormat('HH:mm').format(event.date_fin)}"),
+                  "${DateFormat('HH:mm').format(event.dateDebut)} - ${DateFormat('HH:mm').format(event.dateFin)}"),
             ],
           ),
           const SizedBox(
@@ -67,20 +67,21 @@ class EventCard extends StatelessWidget {
               const SizedBox(
                 width: 10,
               ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const AppText(
-                    "N'oubliez pas",
-                    fontSize: AppFontSize.small,
-                    isBold: true,
-                  ),
-                  AppText(
-                    event.choses_apporter,
-                    fontSize: AppFontSize.small,
-                  ),
-                ],
-              )
+              if (event.chosesApporter != null)
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const AppText(
+                      "N'oubliez pas",
+                      fontSize: AppFontSize.small,
+                      isBold: true,
+                    ),
+                    AppText(
+                      event.chosesApporter!,
+                      fontSize: AppFontSize.small,
+                    ),
+                  ],
+                )
             ],
           ),
           const SizedBox(

@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:my_project/bottom_navbar_pages.dart';
 import 'package:my_project/models/event.dart';
 import 'package:my_project/services/event_service.dart';
 import 'package:my_project/utils/color.dart';
-import 'package:my_project/widgets/text.dart';
+
+List<String> eventCategories = [
+  "Fête",
+  "Anniversaire",
+  "Repas",
+  "Professionnel",
+  "Autre",
+];
 
 class EventForm extends StatefulWidget {
   const EventForm({super.key, this.event, this.callback});
@@ -36,15 +42,15 @@ class _EventFormState extends State<EventForm> {
     if (widget.event != null) {
       typeInput = widget.event!.type;
       titleInput.text = widget.event!.title;
-      debutDate = widget.event!.date_debut;
+      debutDate = widget.event!.dateDebut;
       debutdateinput.text = DateFormat('yyyy-MM-dd').format(debutDate);
-      finDate = widget.event!.date_fin;
+      finDate = widget.event!.dateFin;
       findateinput.text = DateFormat('yyyy-MM-dd').format(finDate);
       lieuInput.text = widget.event!.lieu;
-      chosesAEmporterInput.text = widget.event!.choses_apporter;
-      heureDebut = TimeOfDay.fromDateTime(widget.event!.date_debut);
+      chosesAEmporterInput.text = widget.event!.chosesApporter ?? "";
+      heureDebut = TimeOfDay.fromDateTime(widget.event!.dateDebut);
       heureDebutInput.text = DateFormat('HH:mm').format(debutDate);
-      heureFin = TimeOfDay.fromDateTime(widget.event!.date_fin);
+      heureFin = TimeOfDay.fromDateTime(widget.event!.dateFin);
       heureFinInput.text = DateFormat('HH:mm').format(finDate);
     } else {
       typeInput = "Fête";
@@ -56,13 +62,7 @@ class _EventFormState extends State<EventForm> {
 
   @override
   Widget build(BuildContext context) {
-    List<String> categories = [
-      "Fête",
-      "Anniversaire",
-      "Repas",
-      "Professionnel",
-      "Autre",
-    ];
+    bool isModification = widget.event != null && widget.event!.id != null;
     return Form(
       key: _eventFormKey,
       child: StatefulBuilder(
@@ -88,9 +88,9 @@ class _EventFormState extends State<EventForm> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 30),
                     child: Text(
-                      widget.event == null
-                          ? "Ajouter évènement"
-                          : "Modifier évènement",
+                      isModification
+                          ? "Modifier évènement"
+                          : "Ajouter évènement",
                       style: const TextStyle(
                         color: AppColor.darkPrimary,
                         fontWeight: FontWeight.bold,
@@ -98,7 +98,7 @@ class _EventFormState extends State<EventForm> {
                     ),
                   ),
                   Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 30),
+                    padding: const EdgeInsets.symmetric(horizontal: 30),
                     child: TextFormField(
                       controller: titleInput,
                       decoration: const InputDecoration(
@@ -292,7 +292,7 @@ class _EventFormState extends State<EventForm> {
                               print(typeInput);
                             },
                             value: typeInput,
-                            items: categories.map((String value) {
+                            items: eventCategories.map((String value) {
                               return DropdownMenuItem<String>(
                                 value: value,
                                 child: Text(value),
@@ -321,39 +321,53 @@ class _EventFormState extends State<EventForm> {
                     child: ElevatedButton(
                         onPressed: () {
                           if (_eventFormKey.currentState!.validate()) {
-                            if (widget.event == null) {
-                              EventService.create(
-                                Event(
-                                    null,
-                                    titleInput.value.text,
-                                    DateTime(
-                                      debutDate.year,
-                                      debutDate.month,
-                                      debutDate.day,
-                                      heureDebut.hour,
-                                      heureDebut.minute,
-                                    ),
-                                    finDate,
-                                    typeInput,
-                                    lieuInput.value.text,
-                                    chosesAEmporterInput.value.text),
-                              );
-                            } else {
+                            if (isModification) {
                               EventService.updateEvent(
                                 Event(
-                                  widget.event!.id,
-                                  titleInput.value.text,
-                                  DateTime(
+                                  id: widget.event!.id,
+                                  title: titleInput.value.text,
+                                  dateDebut: DateTime(
                                     debutDate.year,
                                     debutDate.month,
                                     debutDate.day,
                                     heureDebut.hour,
                                     heureDebut.minute,
                                   ),
-                                  finDate,
-                                  typeInput,
-                                  lieuInput.value.text,
-                                  chosesAEmporterInput.value.text,
+                                  dateFin: DateTime(
+                                    finDate.year,
+                                    finDate.month,
+                                    finDate.day,
+                                    heureFin.hour,
+                                    heureFin.minute,
+                                  ),
+                                  type: typeInput,
+                                  lieu: lieuInput.value.text,
+                                  chosesApporter:
+                                      chosesAEmporterInput.value.text,
+                                ),
+                              );
+                            } else {
+                              EventService.create(
+                                Event(
+                                  title: titleInput.value.text,
+                                  dateDebut: DateTime(
+                                    debutDate.year,
+                                    debutDate.month,
+                                    debutDate.day,
+                                    heureDebut.hour,
+                                    heureDebut.minute,
+                                  ),
+                                  dateFin: DateTime(
+                                    finDate.year,
+                                    finDate.month,
+                                    finDate.day,
+                                    heureFin.hour,
+                                    heureFin.minute,
+                                  ),
+                                  type: typeInput,
+                                  lieu: lieuInput.value.text,
+                                  chosesApporter:
+                                      chosesAEmporterInput.value.text,
                                 ),
                               );
                             }
@@ -361,8 +375,7 @@ class _EventFormState extends State<EventForm> {
                             Navigator.pop(context);
                           }
                         },
-                        child: Text(
-                            widget.event == null ? "Ajouter" : "Modifier")),
+                        child: Text(isModification ? "Modifier" : "Ajouter")),
                   ),
                 ],
               ),

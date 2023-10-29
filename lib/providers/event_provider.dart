@@ -21,7 +21,6 @@ class EventProvider extends ChangeNotifier {
 
   void setSelectedDay(value) {
     selectedDay = value;
-    focusedDay = value;
     selectedEvents = getEventsForDay(selectedDay);
     notifyListeners();
   }

@@ -31,7 +31,7 @@ class EventService {
     var events = await EventService.getAll();
     for (Event event in events) {
       DateTime key = DateTime(
-          event.date_debut.year, event.date_debut.month, event.date_debut.day);
+          event.dateDebut.year, event.dateDebut.month, event.dateDebut.day);
       if (eventsByDay[key] != null) {
         eventsByDay[key]!.add(event);
       } else {
@@ -50,20 +50,13 @@ class EventService {
     EventService.getAll().then(
       (events) {
         for (Event event in events) {
-          String key = DateFormat('yyyy-MM-dd').format(event.date_debut);
+          String key = DateFormat('yyyy-MM-dd').format(event.dateDebut);
           if (eventsByDay[key] != null) {
             eventsByDay[key]!.add(event);
           }
           eventsByDay[key] = [event];
         }
         var result = eventsByDay[currentday] ?? [];
-
-        print("events by day:");
-        print(eventsByDay);
-        print("day:");
-        print(currentday);
-        print("result:");
-        print(result);
         return result;
       },
     );
@@ -72,7 +65,6 @@ class EventService {
   }
 
   static Future<Event> create(Event entity) async {
-    print("CREATIONHERE");
     final db = await AppDatabase.instance.database;
     final id = await db.insert(
       "events",

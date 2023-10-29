@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_project/models/event.dart';
 import 'package:my_project/providers/event_provider.dart';
 import 'package:my_project/screens/calendar_screen.dart';
 import 'package:my_project/screens/scheduled_screen.dart';
@@ -166,13 +167,20 @@ class _BottomNavBarPagesState extends State<BottomNavBarPages> {
 
   Future<dynamic> showAddEventBottomSheet(BuildContext context) {
     final eventProvider = Provider.of<EventProvider>(context, listen: false);
-
+    Event event = Event(
+      title: "",
+      dateDebut: DateTime.now(),
+      dateFin: DateTime.now(),
+      type: eventCategories[0],
+      lieu: "",
+    );
     return showModalBottomSheet(
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       context: context,
       builder: (BuildContext context) {
         return EventForm(
+          event: event,
           callback: eventProvider.fetchEvents,
         );
       },
