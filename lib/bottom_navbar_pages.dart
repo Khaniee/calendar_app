@@ -31,6 +31,7 @@ class _BottomNavBarPagesState extends State<BottomNavBarPages> {
 
   @override
   Widget build(BuildContext context) {
+    final eventProvider = Provider.of<EventProvider>(context);
     return Scaffold(
       body: PageStorage(
         bucket: bucket,
@@ -38,7 +39,7 @@ class _BottomNavBarPagesState extends State<BottomNavBarPages> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          showAddEventBottomSheet(context);
+          showAddEventBottomSheet(context, eventProvider);
         },
         backgroundColor: AppColor.primary,
         child: const Icon(Icons.add),
@@ -165,15 +166,19 @@ class _BottomNavBarPagesState extends State<BottomNavBarPages> {
     );
   }
 
-  Future<dynamic> showAddEventBottomSheet(BuildContext context) {
-    final eventProvider = Provider.of<EventProvider>(context, listen: false);
+  Future<dynamic> showAddEventBottomSheet(
+      BuildContext context, EventProvider eventProvider) {
     Event event = Event(
       title: "",
-      dateDebut: DateTime.now(),
       dateFin: DateTime.now(),
+      dateDebut: DateTime.now(),
       type: eventCategories[0],
       lieu: "",
     );
+    if (currentScreen is CalendarScreen) {
+      event.dateDebut = eventProvider.selectedDay;
+      event.dateFin = eventProvider.selectedDay;
+    }
     return showModalBottomSheet(
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
