@@ -34,13 +34,13 @@ class _CalendarScreenState extends State<CalendarScreen> {
     DateTime todayDate = DateTime.now();
     final eventProvider = Provider.of<EventProvider>(context);
 
-    return eventProvider.isLoading
-        ? const Center(
-            child: CircularProgressIndicator(),
-          )
-        : AppLayout(
-            title: "Calendar",
-            child: Column(
+    return AppLayout(
+      title: "Calendar",
+      child: eventProvider.isLoading
+          ? const Center(
+              child: CircularProgressIndicator(),
+            )
+          : Column(
               children: [
                 TableCalendar(
                   calendarFormat: eventProvider.calendarFormat,
@@ -82,6 +82,6 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 ),
               ],
             ),
-          );
+    );
   }
 }

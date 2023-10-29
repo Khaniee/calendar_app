@@ -26,9 +26,9 @@ class _EventFormState extends State<EventForm> {
   final _eventFormKey = GlobalKey<FormState>();
 
   TextEditingController heureDebutInput = TextEditingController();
-  TimeOfDay heureDebut = const TimeOfDay(hour: 00, minute: 00);
+  TimeOfDay heureDebut = TimeOfDay.now();
   TextEditingController heureFinInput = TextEditingController();
-  TimeOfDay heureFin = const TimeOfDay(hour: 00, minute: 00);
+  TimeOfDay heureFin = TimeOfDay.now();
   TextEditingController titleInput = TextEditingController();
   DateTime debutDate = DateTime.now();
   DateTime finDate = DateTime.now();
@@ -127,7 +127,7 @@ class _EventFormState extends State<EventForm> {
                             onTap: () async {
                               DateTime? pickedDate = await showDatePicker(
                                   context: context,
-                                  initialDate: DateTime.now(),
+                                  initialDate: debutDate,
                                   firstDate: DateTime(
                                       2000), //DateTime.now() - not to allow to choose before today.
                                   lastDate: DateTime(2101));
@@ -152,7 +152,7 @@ class _EventFormState extends State<EventForm> {
                             },
                           ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 10,
                         ),
                         Expanded(
@@ -166,11 +166,9 @@ class _EventFormState extends State<EventForm> {
                             onTap: () async {
                               TimeOfDay? pickedTime = await showTimePicker(
                                 context: context,
-                                initialTime: TimeOfDay.now(),
+                                initialTime: heureDebut,
                               );
                               if (pickedTime != null) {
-                                print(
-                                    pickedTime); //pickedTime output format => 2021-03-10 00:00:00.000
                                 String formattedData =
                                     pickedTime.format(context);
                                 setState(() {
@@ -200,27 +198,23 @@ class _EventFormState extends State<EventForm> {
                             onTap: () async {
                               DateTime? pickedDate = await showDatePicker(
                                   context: context,
-                                  initialDate: DateTime.now(),
+                                  initialDate: finDate,
                                   firstDate: DateTime(
                                       2000), //DateTime.now() - not to allow to choose before today.
                                   lastDate: DateTime(2101));
 
                               if (pickedDate != null) {
-                                print(pickedDate);
                                 String formattedDate =
                                     DateFormat('yyyy-MM-dd').format(pickedDate);
-                                print(formattedDate);
                                 setState(() {
                                   finDate = pickedDate;
                                   findateinput.text = formattedDate;
                                 });
-                              } else {
-                                print("Date is not selected");
                               }
                             },
                           ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 10,
                         ),
                         Expanded(
@@ -234,19 +228,15 @@ class _EventFormState extends State<EventForm> {
                             onTap: () async {
                               TimeOfDay? pickedTime = await showTimePicker(
                                 context: context,
-                                initialTime: TimeOfDay.now(),
+                                initialTime: heureFin,
                               );
                               if (pickedTime != null) {
-                                print(
-                                    pickedTime); //pickedTime output format => 2021-03-10 00:00:00.000
                                 String formattedData =
                                     pickedTime.format(context);
                                 setState(() {
                                   heureFinInput.text = formattedData;
                                   heureFin = pickedTime;
                                 });
-                              } else {
-                                print("Date is not selected");
                               }
                             },
                           ),
@@ -255,7 +245,7 @@ class _EventFormState extends State<EventForm> {
                     ),
                   ),
                   Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 30),
+                    padding: const EdgeInsets.symmetric(horizontal: 30),
                     child: TextFormField(
                       controller: lieuInput,
                       decoration: const InputDecoration(
@@ -271,25 +261,21 @@ class _EventFormState extends State<EventForm> {
                     ),
                   ),
                   Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 30),
+                      padding: const EdgeInsets.symmetric(horizontal: 30),
                       child: InputDecorator(
-                        decoration: InputDecoration(
-                            errorStyle: TextStyle(
-                                color: Colors.redAccent, fontSize: 16.0),
-                            hintText: 'Entrez la catégorie',
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(5.0))),
+                        decoration: const InputDecoration(
+                          errorStyle: TextStyle(
+                              color: Colors.redAccent, fontSize: 16.0),
+                          hintText: 'Entrez la catégorie',
+                        ),
                         isEmpty: typeInput == "",
                         child: DropdownButtonHideUnderline(
                           child: DropdownButton<String>(
                             isDense: true,
                             onChanged: (newValue) {
-                              print("change");
-                              print(newValue);
                               setState(() {
                                 typeInput = newValue!;
                               });
-                              print(typeInput);
                             },
                             value: typeInput,
                             items: eventCategories.map((String value) {
@@ -302,19 +288,13 @@ class _EventFormState extends State<EventForm> {
                         ),
                       )),
                   Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 30),
+                    padding: const EdgeInsets.symmetric(horizontal: 30),
                     child: TextFormField(
                       controller: chosesAEmporterInput,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         labelText: 'Les choses à apporter?',
                       ),
                       // The validator receives the text that the user has entered.
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter some text';
-                        }
-                        return null;
-                      },
                     ),
                   ),
                   Center(

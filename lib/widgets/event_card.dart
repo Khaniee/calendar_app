@@ -19,7 +19,7 @@ class EventCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.only(bottom: 10, left: 10, right: 10, top: 15),
+      padding: const EdgeInsets.only(bottom: 10, left: 10, right: 10, top: 20),
       margin: const EdgeInsets.symmetric(vertical: 10),
       decoration: BoxDecoration(
         boxShadow: const [
@@ -64,10 +64,11 @@ class EventCard extends StatelessWidget {
                   isBold: true,
                 )),
               ),
-              const SizedBox(
-                width: 10,
-              ),
-              if (event.chosesApporter != null)
+              if (event.chosesApporter != null &&
+                  event.chosesApporter!.isNotEmpty) ...[
+                const SizedBox(
+                  width: 10,
+                ),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -82,10 +83,8 @@ class EventCard extends StatelessWidget {
                     ),
                   ],
                 )
+              ]
             ],
-          ),
-          const SizedBox(
-            height: 10,
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
