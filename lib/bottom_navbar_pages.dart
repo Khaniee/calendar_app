@@ -1,15 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 import 'package:my_project/models/event.dart';
+import 'package:my_project/models/task.dart';
 import 'package:my_project/providers/event_provider.dart';
+import 'package:my_project/providers/task_provider.dart';
 import 'package:my_project/screens/calendar_screen.dart';
 import 'package:my_project/screens/scheduled_screen.dart';
 import 'package:my_project/screens/setting_screen.dart';
 import 'package:my_project/screens/today_screen.dart';
+import 'package:my_project/services/task_service.dart';
 import 'package:my_project/utils/color.dart';
+import 'package:my_project/utils/fontsize.dart';
 import 'package:my_project/widgets/text.dart';
 import 'package:provider/provider.dart';
 
 import 'widgets/event_form.dart';
+import 'widgets/task_form.dart';
 
 class BottomNavBarPages extends StatefulWidget {
   const BottomNavBarPages({super.key});
@@ -32,6 +39,7 @@ class _BottomNavBarPagesState extends State<BottomNavBarPages> {
   @override
   Widget build(BuildContext context) {
     final eventProvider = Provider.of<EventProvider>(context);
+    final taskProvider = Provider.of<TaskProvider>(context);
     return Scaffold(
       body: PageStorage(
         bucket: bucket,
@@ -39,7 +47,7 @@ class _BottomNavBarPagesState extends State<BottomNavBarPages> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          showAddEventBottomSheet(context, eventProvider);
+          showAddEventBottomSheet(context, eventProvider, taskProvider);
         },
         backgroundColor: AppColor.primary,
         child: const Icon(Icons.add),
@@ -167,27 +175,42 @@ class _BottomNavBarPagesState extends State<BottomNavBarPages> {
   }
 
   Future<dynamic> showAddEventBottomSheet(
-      BuildContext context, EventProvider eventProvider) {
-    Event event = Event(
-      title: "",
-      dateFin: DateTime.now(),
-      dateDebut: DateTime.now(),
-      type: eventCategories[0],
-      lieu: "",
-    );
-    if (currentScreen is CalendarScreen) {
-      event.dateDebut = eventProvider.selectedDay;
-      event.dateFin = eventProvider.selectedDay;
-    }
+    BuildContext context,
+    EventProvider eventProvider,
+    TaskProvider taskProvider,
+  ) {
     return showModalBottomSheet(
       isScrollControlled: true,
-      backgroundColor: Colors.transparent,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(20),
+        ),
+      ),
       context: context,
       builder: (BuildContext context) {
-        return EventForm(
-          event: event,
-          callback: eventProvider.fetchEvents,
-        );
+        if (currentScreen is TodayScreen) {
+          Task task = Task(title: "", hour: DateTime.now());
+          return TaskForm(
+            task: task,
+            callback: taskProvider.fetchTasks,
+          );
+        } else {
+          Event event = Event(
+            title: "",
+            dateFin: DateTime.now(),
+            dateDebut: DateTime.now(),
+            type: eventCategories[0],
+            lieu: "",
+          );
+          if (currentScreen is CalendarScreen) {
+            event.dateDebut = eventProvider.selectedDay;
+            event.dateFin = eventProvider.selectedDay;
+          }
+          return EventForm(
+            event: event,
+            callback: eventProvider.fetchEvents,
+          );
+        }
       },
     );
   }

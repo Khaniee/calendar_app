@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:my_project/bottom_navbar_pages.dart';
 import 'package:my_project/providers/event_provider.dart';
+import 'package:my_project/providers/task_provider.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -14,6 +15,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => EventProvider()),
+        ChangeNotifierProvider(create: (context) => TaskProvider()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

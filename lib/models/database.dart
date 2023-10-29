@@ -1,4 +1,5 @@
 import 'package:my_project/models/event.dart';
+import 'package:my_project/models/task.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
@@ -36,15 +37,24 @@ class AppDatabase {
 
     await db.execute("""
       CREATE TABLE ${Event.tablename} (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            title TEXT,
-            date_debut TEXT,
-            date_fin TEXT,
-            type TEXT,
-            lieu TEXT,
-            choses_apporter TEXT
-          )
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        title TEXT,
+        date_debut TEXT,
+        date_fin TEXT,
+        type TEXT,
+        lieu TEXT,
+        choses_apporter TEXT
+      )
     """);
+
+    await db.execute('''
+      CREATE TABLE ${Task.tablename} (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        title TEXT,
+        is_done INTEGER,
+        hour TEXT
+      )
+    ''');
   }
 
   Future close() async {

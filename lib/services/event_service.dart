@@ -26,9 +26,9 @@ class EventService {
     );
   }
 
-  static Future<Map<DateTime, List<Event>>> getEventsByDay() async {
+  static Future<Map<DateTime, List<Event>>> getEventsByDay(
+      List<Event> events) async {
     Map<DateTime, List<Event>> eventsByDay = {};
-    var events = await EventService.getAll();
     for (Event event in events) {
       DateTime key = DateTime(
           event.dateDebut.year, event.dateDebut.month, event.dateDebut.day);
