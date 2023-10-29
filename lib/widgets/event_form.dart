@@ -305,7 +305,7 @@ class _EventFormState extends State<EventForm> {
                     padding: EdgeInsets.symmetric(horizontal: 30),
                     child: TextFormField(
                       controller: chosesAEmporterInput,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         labelText: 'Les choses à apporter?',
                       ),
                       // The validator receives the text that the user has entered.
