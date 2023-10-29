@@ -1,12 +1,12 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
+import 'package:my_project/providers/event_provider.dart';
 import 'package:my_project/screens/calendar_screen.dart';
 import 'package:my_project/screens/scheduled_screen.dart';
 import 'package:my_project/screens/setting_screen.dart';
 import 'package:my_project/screens/today_screen.dart';
 import 'package:my_project/utils/color.dart';
 import 'package:my_project/widgets/text.dart';
+import 'package:provider/provider.dart';
 
 import 'widgets/event_form.dart';
 
@@ -20,33 +20,33 @@ class BottomNavBarPages extends StatefulWidget {
 class _BottomNavBarPagesState extends State<BottomNavBarPages> {
   int currentTab = 1;
   final List<Widget> screens = [
-    CalendarScreen(),
-    TodayScreen(),
-    ScheduledScreen(),
-    SettingScreen(),
+    const CalendarScreen(),
+    const TodayScreen(),
+    const ScheduledScreen(),
+    const SettingScreen(),
   ];
   final PageStorageBucket bucket = PageStorageBucket();
-  Widget currentScreen = TodayScreen();
+  Widget currentScreen = const TodayScreen();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: PageStorage(
-        child: currentScreen,
         bucket: bucket,
+        child: currentScreen,
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           showAddEventBottomSheet(context);
         },
-        child: Icon(Icons.add),
         backgroundColor: AppColor.primary,
+        child: const Icon(Icons.add),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: BottomAppBar(
-        shape: CircularNotchedRectangle(),
+        shape: const CircularNotchedRectangle(),
         notchMargin: 10,
-        child: Container(
+        child: SizedBox(
           height: 60,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -165,12 +165,16 @@ class _BottomNavBarPagesState extends State<BottomNavBarPages> {
   }
 
   Future<dynamic> showAddEventBottomSheet(BuildContext context) {
+    final eventProvider = Provider.of<EventProvider>(context, listen: false);
+
     return showModalBottomSheet(
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       context: context,
       builder: (BuildContext context) {
-        return const EventForm();
+        return EventForm(
+          callback: eventProvider.fetchEvents,
+        );
       },
     );
   }

@@ -20,9 +20,9 @@ class _EventFormState extends State<EventForm> {
   final _eventFormKey = GlobalKey<FormState>();
 
   TextEditingController heureDebutInput = TextEditingController();
-  TimeOfDay heureDebut = TimeOfDay(hour: 00, minute: 00);
+  TimeOfDay heureDebut = const TimeOfDay(hour: 00, minute: 00);
   TextEditingController heureFinInput = TextEditingController();
-  TimeOfDay heureFin = TimeOfDay(hour: 00, minute: 00);
+  TimeOfDay heureFin = const TimeOfDay(hour: 00, minute: 00);
   TextEditingController titleInput = TextEditingController();
   DateTime debutDate = DateTime.now();
   DateTime finDate = DateTime.now();
@@ -356,13 +356,6 @@ class _EventFormState extends State<EventForm> {
                                   chosesAEmporterInput.value.text,
                                 ),
                               );
-                              ScaffoldMessenger.of(context)
-                                  .showSnackBar(const SnackBar(
-                                      backgroundColor: Colors.green,
-                                      content: AppText(
-                                        "évènement modifié",
-                                        color: AppColor.white,
-                                      )));
                             }
                             widget.callback!();
                             Navigator.pop(context);

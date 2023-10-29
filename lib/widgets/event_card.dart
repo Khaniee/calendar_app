@@ -70,7 +70,7 @@ class EventCard extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  AppText(
+                  const AppText(
                     "N'oubliez pas",
                     fontSize: AppFontSize.small,
                     isBold: true,
@@ -92,7 +92,7 @@ class EventCard extends StatelessWidget {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Icon(
+                  const Icon(
                     Icons.location_on_sharp,
                     color: AppColor.textColor,
                     size: 16,
@@ -129,50 +129,29 @@ class EventCard extends StatelessWidget {
                   IconButton(
                     onPressed: () {
                       showDialog(
-                          context: context,
-                          builder: (BuildContext context) => AlertDialog(
-                                title: const Text("Avertissement"),
-                                content: const AppText(
-                                    "Vous êtes sur de supprimer cet évènement?"),
-                                actions: [
-                                  TextButton(
-                                      onPressed: () {
-                                        Navigator.pop(context);
-                                      },
-                                      child: Text("Annuler")),
-                                  TextButton(
-                                      onPressed: () {
-                                        if (event.id != null) {
-                                          EventService.deleteEvent(event.id!);
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(
-                                            const SnackBar(
-                                              elevation: 0,
-                                              backgroundColor: Colors.green,
-                                              content: AppText(
-                                                "Evenement supprimé !",
-                                                color: AppColor.white,
-                                              ),
-                                            ),
-                                          );
-                                        } else {
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(
-                                            const SnackBar(
-                                              content: AppText(
-                                                "Erreur lors du supression!",
-                                                color: AppColor.white,
-                                              ),
-                                            ),
-                                          );
-                                        }
-                                        Navigator.pop(context);
-                                      },
-                                      child: Text("Supprimer")),
-                                ],
-                              ));
-
-                      // _selectedEvents.value = _getEventsForDay(_selectedDay);
+                        context: context,
+                        builder: (BuildContext context) => AlertDialog(
+                          title: const Text("Avertissement"),
+                          content: const AppText(
+                              "Vous êtes sur de supprimer cet évènement?"),
+                          actions: [
+                            TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child: const Text("Annuler")),
+                            TextButton(
+                                onPressed: () {
+                                  if (event.id != null) {
+                                    EventService.deleteEvent(event.id!);
+                                    onEventModify();
+                                  }
+                                  Navigator.pop(context);
+                                },
+                                child: const Text("Supprimer")),
+                          ],
+                        ),
+                      );
                     },
                     icon: const Icon(
                       Icons.delete_sweep,
